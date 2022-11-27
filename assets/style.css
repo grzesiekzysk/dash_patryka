@@ -1,0 +1,49 @@
+  body {
+    font-size: 9;
+    font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+
+  #container {
+    background-color: rgb(209, 209, 209);
+    margin: auto;
+    display: flex;
+  }
+
+  #filters {
+    background-color: rgb(50, 50, 50);
+    font-size: 16px;
+    float: left;
+    width: 25%;
+  }
+
+  #filters h4 {
+    color: white;
+  }
+
+  #header {
+    color: white;
+    text-align: center;
+  }
+
+  #content {
+    width: 75%;
+    float: left;
+  }
+
+  #buttons {
+    background-color: rgb(82, 82, 82);
+    padding: 20px;
+    text-align: center;
+  }
+
+  /* #submit-button {
+    margin: 10px;
+  } */
+
+  .filter {
+    text-align: center;
+  }
+
+  td.CalendarDay {
+    padding: 0;
+  }
