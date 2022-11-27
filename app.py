@@ -219,7 +219,7 @@ app.layout = html.Div(
               State("crime_category","value"),
               State("districts","value")])
 
-def bar_plot(n_clicks,start_date,end_date,value,days,crimes, distr):
+def bar_plot(n_clicks, start_date, end_date, value, days, crimes, distr):
 
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
@@ -232,21 +232,22 @@ def bar_plot(n_clicks,start_date,end_date,value,days,crimes, distr):
 
     df_barplot = df_barplot.groupby("hour").agg({"Time":"count"}).reset_index()
 
-    data = [go.Bar(x = df_barplot["hour"], y = df_barplot["Time"], text = df_barplot["Time"])]
-    layout = go.Layout(title = "Crimes divided into hours",
-                       xaxis_title = "Hours",
-                       yaxis_title = "Number of cases",
-                       hovermode = False,
-                      # hoverlabel=dict(
-                      #                    bgcolor="white",
-                      #                    font_size=16,
-                      #                      font_family="Rockwell"),
-                      xaxis = dict(dtick = 1))
+    data = [go.Bar(
+        x=df_barplot["hour"],
+        y=df_barplot["Time"],
+        text=df_barplot["Time"])]
+    
+    layout=go.Layout(
+        title="Crimes divided into hours",
+        xaxis_title="Hours",
+        yaxis_title="Number of cases",
+        hovermode=False,
+        xaxis=dict{
+            "dtick": 1
+            }
+        )
 
-
-    fig = {"data" : data, "layout" : layout}
-
-    return fig
+    return {"data": data, "layout": layout}
 
 
 @app.callback(Output("table-container","children"),
