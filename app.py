@@ -221,13 +221,15 @@ def aktualizacja_danych(
     crimes, 
     distr):
 
-    global df_temp
+    if dash.callback_context.triggered_id == 'submit-button':
 
-    df_temp = df.loc[(df["Date"] >= start_date) & (df["Date"] <= end_date)].copy() 
-    df_temp = df_temp.loc[(df_temp["hour"] >= value[0]) & (df_temp["hour"] <= value[1])]
-    df_temp = df_temp.loc[df_temp["DayOfWeek"].isin(days)]
-    df_temp = df_temp.loc[df_temp["Category"].isin(crimes)]
-    df_temp = df_temp.loc[df_temp["PdDistrict"].isin(distr)]
+        global df_temp
+
+        df_temp = df.loc[(df["Date"] >= start_date) & (df["Date"] <= end_date)].copy() 
+        df_temp = df_temp.loc[(df_temp["hour"] >= value[0]) & (df_temp["hour"] <= value[1])]
+        df_temp = df_temp.loc[df_temp["DayOfWeek"].isin(days)]
+        df_temp = df_temp.loc[df_temp["Category"].isin(crimes)]
+        df_temp = df_temp.loc[df_temp["PdDistrict"].isin(distr)]
 
     return generuj_wykres_tabele(
         df_fun=df_temp, 
