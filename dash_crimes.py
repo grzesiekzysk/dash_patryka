@@ -30,23 +30,75 @@ crime_category = df["Category"].unique()
 PdDistrict = df.loc[~df["PdDistrict"].isna()]["PdDistrict"].unique()
 
 
-app.layout = html.Div([
+app.layout = html.Div(
+    id='container',
+    children=[
+
+            html.Div(
+                id="nav-bar",
+                children=[
+                
+                    html.Button(
+                        id = "submit-button",
+                        n_clicks = 0,
+                        children = "Apply settings",
+                        ),
+
+                    html.Br(),
+                    html.Br(),
+
+                    html.Button(
+                        id = "submit-button2",
+                        n_clicks = 0,
+                        children = "Update Dashboard",
+                        )
+
+                    ]
+                ),
+
+            html.Div(
+                id='content',
+                children=[
+
+                    dcc.Tabs(
+                        children=[
+                            dcc.Tab(
+                                label = "Dashboard",
+                                children = [
+                                    
+                                    html.Div(
+                                        children=[dcc.Graph(id = "barplot")],
+                                        style = {
+                                            "width":"50%", 
+                                            "float":"left"}
+                                    ),
+
+                                    html.Div(
+                                        children=[
+                                            html.Iframe(
+                                                id = "map", 
+                                                srcDoc = None, 
+                                                width = "100%",
+                                                height = "400")
+                                        ], 
+                                        style = {"float":"left","width":"50%"})
+                               ]),
 
 
-            html.Div([
-                        html.P(),
-                        html.Button(id = "submit-button",
-                                    n_clicks = 0,
-                                    children = "Apply settings",
-                                    style = {"fontSize" : 24}),
+                            dcc.Tab(
+                                label = "Table",
+                                children = [
 
-                        html.Br(),
-                        html.Br(),
+                                    html.H3("Data"),
+                                    html.P(),
+                                    html.Div(id = "table-container")
+                               ])
+                       ]
+                    )
+                ]
+            ),
 
-                        html.Button(id = "submit-button2",
-                                    n_clicks = 0,
-                                    children = "Update Dashboard",
-                                    style = {"fontSize" : 24})]),
+            html.Div(id='hidden-div'),
 
 
              html.Div([
@@ -146,73 +198,24 @@ app.layout = html.Div([
                           ]),
 
              html.P(),
-                       dcc.Tabs([
-
-                       dcc.Tab(label = "Dashboard",
-
-                               children = [
-
-                               html.Br(),
-                               html.Br(),
-                               html.Br(),
-
-                               html.Div([dcc.Graph(id = "barplot")],
-                                    style = {"width":"50%", "float":"left"}),
-
-                               html.Div([html.Iframe(id = "map", srcDoc = None, width = "100%",height = "400")], style = {"float":"left","width":"50%"})
-
-                               ]),
-
-
-                       dcc.Tab(label = "Table",
-                               children = [
-
-                        html.H3("Data"),
-
-                        html.P(),
-
-                        html.Div(id = "table-container")
-
-                               ])
-                       ]),
-
-            html.Div(id="hidden-div", style={"display":"none"})
+                       
 
 ])
 
 @app.callback(Output("barplot","figure"),
-              Input("submit-button2","n_clicks")
-#              [State("my-date-picker-range","start_date"),
-#              State("my-date-picker-range","end_date"),
-#              State("range-slider","value"),
-#              State("Days","value"),
-#              State("crime_category","value"),
-#              State("districts","value")]
-
-              )
-
+              Input("submit-button2","n_clicks"))
 def bar_plot(n_clicks):
-#n_clicks,start_date,end_date,value,days,crimes, distr
-
-
-#    df_barplot = df.loc[(df["Date"] >= start_date) & (df["Date"] <= end_date)]
-#    df_barplot = df_barplot.loc[(df_barplot["hour"] >= value[0]) & (df_barplot["hour"] <= value[1])]
-#    df_barplot = df_barplot.loc[df_barplot["DayOfWeek"].isin(days)]
-#    df_barplot = df_barplot.loc[df_barplot["Category"].isin(crimes)]
-#    df_barplot = df_barplot.loc[df_barplot["PdDistrict"].isin(distr)]
 
     df_barplot = df_temp.groupby("hour").agg({"Time":"count"}).reset_index()
 
     data = [go.Bar(x = df_barplot["hour"], y = df_barplot["Time"], text = df_barplot["Time"])]
-    layout = go.Layout(title = "Crimes divided into hours",
-                       xaxis_title = "Hours",
-                       yaxis_title = "Number of cases",
-                       hovermode = False,
-                      # hoverlabel=dict(
-                      #                    bgcolor="white",
-                      #                    font_size=16,
-                      #                      font_family="Rockwell"),
-                      xaxis = dict(dtick = 1))
+    layout = go.Layout(
+        title = "Crimes divided into hours",
+        xaxis_title = "Hours",
+        yaxis_title = "Number of cases",
+        hovermode = False,
+        xaxis = dict(dtick = 1)
+    )
 
 
     fig = {"data" : data, "layout" : layout}
@@ -221,24 +224,8 @@ def bar_plot(n_clicks):
 
 
 @app.callback(Output("table-container","children"),
-              Input("submit-button2","n_clicks")
-#              [State("my-date-picker-range","start_date"),
-#              State("my-date-picker-range","end_date"),
-#              State("range-slider","value"),
-#              State("Days","value"),
-#              State("crime_category","value"),
-#              State("districts","value")]
-)
+              Input("submit-button2","n_clicks"))
 def table_filtering(n_clicks):
-# start_date,end_date,value,days, crimes, distr
-#
-#    df_table = df.loc[(df["Date"] >= start_date) & (df["Date"] <= end_date)]
-#    df_table["Date"] = df_table["Date"].dt.strftime("%Y-%m-%d")
-#    df_table = df_table.loc[(df_table["hour"] >= value[0]) & (df_table["hour"] <= value[1])]
-#    df_table = df_table.loc[df_table["DayOfWeek"].isin(days)]
-#    df_table = df_table.loc[df_table["Category"].isin(crimes)]
-#    df_table = df_table.loc[df_table["PdDistrict"].isin(distr)]
-
 
     table = dash_table.DataTable(id='table',
                         columns=[{"name": i, "id": i} for i in df_temp.columns],
@@ -265,15 +252,14 @@ def func(n_clicks):
 
 @app.callback(Output("crimes_number","children"),
               Input("submit-button2","n_clicks"))
-
 def crimes_number(n_clicks):
     result = len(df_temp)
+    
     return result
 
 
 @app.callback(Output("crimes_share","children"),
               Input("submit-button2","n_clicks"))
-
 def crimes_number(n_clicks):
 
     a = len(df_temp)
@@ -304,7 +290,6 @@ def table_most_popular_crimes(n_clicks):
 
 @app.callback(Output("map","SrcDoc"),
               Input("submit-button2","n_clicks"))
-
 def map(n_clicks):
 
     df_map = df_temp.copy()
@@ -324,8 +309,6 @@ def map(n_clicks):
 
     return open("map.html","r").read()
 
-
-
 @app.callback(Output("hidden-div","children"),
               Input("submit-button","n_clicks"),
               [State("my-date-picker-range","start_date"),
@@ -336,8 +319,6 @@ def map(n_clicks):
                State("districts","value")])
 
 def aktualizacja_danych(n_clicks,start_date,end_date,value,days, crimes, distr):
-
-#    if dash.callback_context.triggered_id == "submit-button":
 
     global df_temp
 
@@ -350,4 +331,4 @@ def aktualizacja_danych(n_clicks,start_date,end_date,value,days, crimes, distr):
     print("Data updated")
 
 if __name__ == "__main__":
-    app.run_server()
+    app.run_server(debug=True)
