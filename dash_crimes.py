@@ -45,16 +45,93 @@ app.layout = html.Div(
                         ),
 
                     html.Br(),
-                    html.Br(),
 
                     html.Button(
                         id = "submit-button2",
                         n_clicks = 0,
                         children = "Update Dashboard",
-                        )
+                        ),
 
-                    ]
-                ),
+                    html.Div(
+                        children=[
+                            html.P("Select date range"),
+                            dcc.DatePickerRange(
+                                id='my-date-picker-range',
+                                min_date_allowed=date(2016, 1, 1),
+                                max_date_allowed=date(2016, 12, 31),
+                                initial_visible_month=date(2016, 1, 1),
+                                start_date = date(2016,1,1),
+                                end_date=date(2016, 12, 31),
+                                display_format = "YYYY-MM-DD"
+
+                            )
+
+                        ]
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.P("Select time range"),
+                            dcc.RangeSlider(
+                                id = "range-slider",
+                                min = 0,
+                                max = 23,
+                                marks = {i : str(i) for i in range(0,24)},
+                                value = [0,23]
+                            )
+
+                        ]  
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.P("Select day"),
+                            dcc.Dropdown(
+                                id = "Days",
+                                options = [{"label":i, "value":i} for i in DayOfWeek],
+                                value = ["Wednesday","Sunday"],
+                                multi = True)
+                        ]
+                    ),
+
+
+                    html.Div(
+                        children=[
+                            html.P("Select crime category"),
+                            dcc.Dropdown(
+                                id = "crime_category",
+                                options = [{"label":i, "value":i} for i in crime_category],
+                                value = ["WEAPON LAWS"],
+                                multi = True)
+                        ]
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.P("Select district"),
+                            dcc.Dropdown(
+                                id = "districts",
+                                options = [{"label":i, "value":i} for i in PdDistrict],
+                                value = PdDistrict,
+                                multi = True)
+                        ]
+                    ),
+                    
+                    html.Div(
+                        children=[
+                            html.Button("Download CSV", id = "btn-csv"),
+                            dcc.Download(id = "download-dataframe-csv"),
+                        ]
+                    ),
+
+                    html.Div(
+                        children=[
+                            html.Button("Download XLSX", id = "btn-xlsx"),
+                            dcc.Download(id = "download-dataframe-xlsx"),
+                        ]
+                    )
+                ]
+            ),
 
             html.Div(
                 id='content',
@@ -73,6 +150,8 @@ app.layout = html.Div(
                                             "float":"left"}
                                     ),
 
+                                    html.Br(),
+
                                     html.Div(
                                         children=[
                                             html.Iframe(
@@ -80,126 +159,49 @@ app.layout = html.Div(
                                                 srcDoc = None, 
                                                 width = "100%",
                                                 height = "400")
-                                        ], 
-                                        style = {"float":"left","width":"50%"})
-                               ]),
+                                        ]
+                                    ),
+
+                                    html.Div(
+                                        id='crimes-number',
+                                        children=[
+                                            html.Label("Total number of crimes"),
+                                            html.Div(id = "crimes_number")
+                                        ]),
+
+                                    html.Div(
+                                        id='violations-number',
+                                        children=[
+                                            html.Label("Number of violations per each crime"),
+                                            html.Div(id = "crimes_share")
+                                        ]),
+
+                                    html.Div(
+                                        id='popular-violations',
+                                        children=[                    
+                                            html.Label("The most popular violations"),
+                                            html.Div(id = "table-short", style = {"width":"15%"})
+                                        ])
+                                    ]
+                               ),
 
 
                             dcc.Tab(
                                 label = "Table",
                                 children = [
 
-                                    html.H3("Data"),
+                                    html.P("Data"),
                                     html.P(),
                                     html.Div(id = "table-container")
                                ])
                        ]
                     )
+
+
                 ]
             ),
 
-            html.Div(id='hidden-div'),
-
-
-             html.Div([
-                        html.H3("Select date range"),
-                        html.P(),
-                        dcc.DatePickerRange(
-                                id='my-date-picker-range',
-                                min_date_allowed=date(2016, 1, 1),
-                                max_date_allowed=date(2016, 12, 31),
-                                initial_visible_month=date(2016, 1, 1),
-                                start_date = date(2016,1,1),
-                                end_date=date(2016, 12, 31),
-                                display_format = "YYYY-MM-DD"
-
-                        )
-
-             ], style = {"float":"left"}),
-
-
-             html.Div([
-             html.P(),
-             html.P(),
-             html.H3("Select time range"),
-                dcc.RangeSlider(id = "range-slider",
-                                min = 0,
-                                max = 23,
-                                marks = {i : str(i) for i in range(0,24)},
-                                value = [0,23])
-
-             ], style = {"width" : "25%", "float":"left"}),
-
-
-
-             html.Div([
-             html.P(),
-             html.P(),
-             html.H3("Select day"),
-                dcc.Dropdown(id = "Days",
-                             options = [{"label":i, "value":i} for i in DayOfWeek],
-                             value = ["Wednesday","Sunday"],
-                             multi = True)
-             ],style = {"width":"25%", "float":"left"}),
-
-
-             html.Div([
-             html.P(),
-             html.P(),
-             html.H3("Select crime category"),
-                dcc.Dropdown(id = "crime_category",
-                             options = [{"label":i, "value":i} for i in crime_category],
-                             value = ["WEAPON LAWS"],
-                             multi = True)
-             ],style = {"width":"25%","float":"left"}),
-
-            html.Div([],style = {"clear":"both"}),
-
-
-             html.Div([
-             html.P(),
-             html.P(),
-             html.H3("Select district"),
-                dcc.Dropdown(id = "districts",
-                               options = [{"label":i, "value":i} for i in PdDistrict],
-                               value = PdDistrict,
-                               multi = True)
-             ],style = {"width":"25%"}),
-
-             html.P(),
-             html.P(),
-
-             html.Label("Total number of crimes"),
-             html.Div(id = "crimes_number"),
-             html.Br(),
-             html.Label("Number of violations per each crime"),
-             html.Div(id = "crimes_share"),
-             html.Br(),
-             html.Label("The most popular violations"),
-             html.Div(id = "table-short", style = {"width":"15%"}),
-             html.Br(),
-
-
-
-             html.Div([
-
-                html.Button("Download CSV", id = "btn-csv"),
-                dcc.Download(id = "download-dataframe-csv"),
-
-             ]),
-
-             html.Br(),
-
-             html.Div([
-
-                html.Button("Download XLSX", id = "btn-xlsx"),
-                dcc.Download(id = "download-dataframe-xlsx"),
-
-                          ]),
-
-             html.P(),
-                       
-
+            html.Div(id='hidden-div')
 ])
 
 @app.callback(Output("barplot","figure"),
