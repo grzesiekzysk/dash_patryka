@@ -11,7 +11,7 @@ import folium
 from folium.plugins import MarkerCluster
 
 
-app = dash.Dash(__name__)
+app = (__name__, assets_folder='assets')
 
 df = pd.read_csv("crimes.csv", parse_dates = ["Date"])
 
