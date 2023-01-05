@@ -11,7 +11,7 @@ import folium
 from folium.plugins import MarkerCluster
 
 
-app = (__name__, assets_folder='assets')
+app = dash.Dash(__name__, assets_folder='assets')
 
 df = pd.read_csv("crimes.csv", parse_dates = ["Date"])
 
@@ -144,44 +144,47 @@ app.layout = html.Div(
                                 children = [
                                     
                                     html.Div(
-                                        children=[dcc.Graph(id = "barplot")],
-                                        style = {
-                                            "width":"50%", 
-                                            "float":"left"}
+                                        id='bar-container',
+                                        children=[dcc.Graph(id = "barplot")]
                                     ),
 
-                                    html.Br(),
-
                                     html.Div(
+                                        id='map-container',
                                         children=[
                                             html.Iframe(
                                                 id = "map", 
                                                 srcDoc = None, 
-                                                width = "100%",
+                                                width = "90%",
                                                 height = "400")
                                         ]
                                     ),
 
                                     html.Div(
-                                        id='crimes-number',
+                                        id='stat-container',
                                         children=[
-                                            html.Label("Total number of crimes"),
-                                            html.Div(id = "crimes_number")
-                                        ]),
+                                            html.Div(
+                                            id='crimes-number',
+                                            children=[
+                                                html.Label("Total number of crimes"),
+                                                html.Div(id = "crimes_number")
+                                            ]),
 
-                                    html.Div(
-                                        id='violations-number',
-                                        children=[
-                                            html.Label("Number of violations per each crime"),
-                                            html.Div(id = "crimes_share")
-                                        ]),
+                                            html.Div(
+                                                id='violations-number',
+                                                children=[
+                                                    html.Label("Number of violations per each crime"),
+                                                    html.Div(id = "crimes_share")
+                                                ]),
 
-                                    html.Div(
-                                        id='popular-violations',
-                                        children=[                    
-                                            html.Label("The most popular violations"),
-                                            html.Div(id = "table-short", style = {"width":"15%"})
-                                        ])
+                                            html.Div(
+                                                id='popular-violations',
+                                                children=[                    
+                                                    html.Label("The most popular violations"),
+                                                    html.Div(id = "table-short", style = {"width":"15%"})
+                                                ])
+                                            ]
+
+                                        )
                                     ]
                                ),
 
@@ -189,10 +192,13 @@ app.layout = html.Div(
                             dcc.Tab(
                                 label = "Table",
                                 children = [
-
-                                    html.P("Data"),
-                                    html.P(),
-                                    html.Div(id = "table-container")
+                                    html.Div(
+                                        id='table-container-2',
+                                        children=[
+                                            html.Div(id = "table-container")
+                                        ]
+                                    )
+                                    
                                ])
                        ]
                     )
@@ -282,12 +288,22 @@ def table_most_popular_crimes(n_clicks):
     df_short.columns = ["N"]
     df_short.reset_index(inplace = True)
 
-
-    df_final = dash_table.DataTable(id='df_dinal',
+    df_final = dash_table.DataTable(
+                        id='df_dinal',
                         columns=[{"name": i, "id": i} for i in df_short.columns],
-                        data=df_short.to_dict('records'), page_size = 5)
+                        data=df_short.to_dict('records'), 
+                        page_size = 5,
+                        style_table={
+                            'maxHeight': '50ex',
+                            'overflowY': 'scroll',
+                            'overflowX': 'scroll',
+                            'width': '500px',
+                            'minWidth': '500px'
+                            }
+                        )
 
     return df_final
+
 
 
 @app.callback(Output("map","SrcDoc"),
