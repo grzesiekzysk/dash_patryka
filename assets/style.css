@@ -10,35 +10,111 @@ body {
     background-color: #1f1f1f;
   }
 
+#header {
+  font-size: 20px;
+  background-color: #367fa9;
+  margin-bottom: 20px;
+  padding: 10px;
+  font-weight: 700;
+}
+
 #container {
-    width: 95%;
+    width: 100%;
     margin: auto;
+    overflow: hidden;
 }
 
 #nav-bar {
-    background-color: #dd15a8;
-    width: 20%;
+    background-color: #222d32;
+    color: #ffffff;
+    width: 300px;
     float: left;
+    padding: 10px;
+    margin-right: 10px;
+    text-align: center;
 }
 
 #content {
-    background-color: #36dd15;
-    width: 80%;
+    background-color: #ecf0f5;
     float: left;
+    width: calc(100% - 330px);
 }
 
 #bar-container {
   text-align: center;
+  padding: 10px;
 }
 
 #map-container {
-  width: 70%;
+  width: calc(100% - 460px);
   text-align: center;
   float: left;
+  padding: 10px;
 }
 
 #stat-container {
-  width: 30%;
+  width: 400px;
   text-align: center;
   float: left;
+  padding: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#table-container {
+  width: 100%;
+}
+
+#crimes-number_cont {
+  font-size: 16px;
+  color: white;
+  height: 140px;
+  margin-bottom: 10px;
+  background-color: #00c0ef;
+}
+
+#crimes_number {
+  font-size: 70px;
+  font-weight: 700;
+  }
+
+#crimes_share-cont {
+  font-size: 16px;
+  color: white;
+  height: 140px;
+  margin-bottom: 10px;
+  background-color: #d81b60;
+}
+
+#crimes_share {
+  font-size: 70px;
+  font-weight: 700;
+}
+
+#popular-violations {
+  color: black;
+  background-color: white;
+  font-size: 16px;
+}
+
+.button {
+  background-color: #3c8dbc;
+  margin: 5px;
+  border: none;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 16px;
+  width: 150px;
+}
+
+.button:hover{
+  background-color: #00d4f8;
+  color: #000000;
+}
+
+.DateInput_input, .DateInput_input_1 {
+  height: 25px;
+  font-size: 14px;
+  width: 100%;
 }
