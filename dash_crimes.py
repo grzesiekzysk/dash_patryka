@@ -38,8 +38,16 @@ app.layout = html.Div(
                 id="nav-bar",
                 children=[
                 
+                    html.Div(
+                        id='header',
+                        children=[
+                            'San Francisco crimes'
+                        ]
+                    ),
+                    
                     html.Button(
                         id = "submit-button",
+                        className='button',
                         n_clicks = 0,
                         children = "Apply settings",
                         ),
@@ -48,6 +56,7 @@ app.layout = html.Div(
 
                     html.Button(
                         id = "submit-button2",
+                        className='button',
                         n_clicks = 0,
                         children = "Update Dashboard",
                         ),
@@ -62,8 +71,10 @@ app.layout = html.Div(
                                 initial_visible_month=date(2016, 1, 1),
                                 start_date = date(2016,1,1),
                                 end_date=date(2016, 12, 31),
-                                display_format = "YYYY-MM-DD"
-
+                                display_format = "YYYY-MM-DD",
+                                style = {
+                                    'line-height': '10px'
+                                }
                             )
 
                         ]
@@ -119,14 +130,23 @@ app.layout = html.Div(
                     
                     html.Div(
                         children=[
-                            html.Button("Download CSV", id = "btn-csv"),
-                            dcc.Download(id = "download-dataframe-csv"),
+                            html.Button("Download CSV",
+                                id = "btn-csv",
+                                className='button'
+                            ),
+                            dcc.Download(
+                                id = "download-dataframe-csv"
+                                ),
                         ]
                     ),
 
                     html.Div(
                         children=[
-                            html.Button("Download XLSX", id = "btn-xlsx"),
+                            html.Button(
+                                "Download XLSX", 
+                                id = "btn-xlsx", 
+                                className='button'
+                            ),
                             dcc.Download(id = "download-dataframe-xlsx"),
                         ]
                     )
@@ -154,8 +174,8 @@ app.layout = html.Div(
                                             html.Iframe(
                                                 id = "map", 
                                                 srcDoc = None, 
-                                                width = "90%",
-                                                height = "400")
+                                                width = "100%",
+                                                height = "500")
                                         ]
                                     ),
 
@@ -163,14 +183,14 @@ app.layout = html.Div(
                                         id='stat-container',
                                         children=[
                                             html.Div(
-                                            id='crimes-number',
+                                            id='crimes-number_cont',
                                             children=[
                                                 html.Label("Total number of crimes"),
                                                 html.Div(id = "crimes_number")
                                             ]),
 
                                             html.Div(
-                                                id='violations-number',
+                                                id='crimes_share-cont',
                                                 children=[
                                                     html.Label("Number of violations per each crime"),
                                                     html.Div(id = "crimes_share")
@@ -180,7 +200,9 @@ app.layout = html.Div(
                                                 id='popular-violations',
                                                 children=[                    
                                                     html.Label("The most popular violations"),
-                                                    html.Div(id = "table-short", style = {"width":"15%"})
+                                                    html.Div(
+                                                        id = "table-short"
+                                                    )
                                                 ])
                                             ]
 
@@ -193,10 +215,7 @@ app.layout = html.Div(
                                 label = "Table",
                                 children = [
                                     html.Div(
-                                        id='table-container-2',
-                                        children=[
-                                            html.Div(id = "table-container")
-                                        ]
+                                        id = "table-container"
                                     )
                                     
                                ])
@@ -235,9 +254,31 @@ def bar_plot(n_clicks):
               Input("submit-button2","n_clicks"))
 def table_filtering(n_clicks):
 
-    table = dash_table.DataTable(id='table',
-                        columns=[{"name": i, "id": i} for i in df_temp.columns],
-                        data=df_temp.to_dict('records'), page_size = 25)
+    table = dash_table.DataTable(
+        id='table',
+        columns=[{"name": i, "id": i} for i in df_temp.columns],
+        data=df_temp.to_dict('records'), 
+        page_size = 25,
+        style_cell={
+            'textAlign': 'center',
+            'font_size': '12px',
+            'font_family': 'Verdana, Geneva, Tahoma, sans-serif'
+        },
+        style_header={
+            'backgroundColor': 'rgb(210, 210, 210)',
+            'color': 'black',
+            #'fontWeight': 'bold',
+            'font_size': '12',
+            'font_family': 'Verdana, Geneva, Tahoma, sans-serif'
+        },
+        style_table={
+            'overflowX': 'scroll'
+        },
+        style_data={
+            'color': 'black',
+            'backgroundColor': 'white'
+        }
+        )
 
     return table
 
@@ -293,13 +334,25 @@ def table_most_popular_crimes(n_clicks):
                         columns=[{"name": i, "id": i} for i in df_short.columns],
                         data=df_short.to_dict('records'), 
                         page_size = 5,
+                        style_cell={
+                            'textAlign': 'center',
+                            'font_size': '12px',
+                             'font_family': 'Verdana, Geneva, Tahoma, sans-serif'
+                        },
+                        style_header={
+                            'backgroundColor': 'rgb(210, 210, 210)',
+                            'color': 'black',
+                            #'fontWeight': 'bold',
+                            'font_size': '12px',
+                            'font_family': 'Verdana, Geneva, Tahoma, sans-serif'
+                        },
                         style_table={
-                            'maxHeight': '50ex',
-                            'overflowY': 'scroll',
-                            'overflowX': 'scroll',
-                            'width': '500px',
-                            'minWidth': '500px'
-                            }
+                            'overflowX': 'scroll'
+                        },
+                        style_data={
+                            'color': 'black',
+                            'backgroundColor': 'white'
+                        }
                         )
 
     return df_final
@@ -321,7 +374,11 @@ def map(n_clicks):
 
     for index, row in df_map.iterrows():
 
-        folium.CircleMarker([row["Y"], row["X"]], popup = row["Descript"], fill = True).add_to(marker_cluster)
+        folium.CircleMarker(
+            [row["Y"], 
+            row["X"]], 
+            popup = row["Descript"], 
+            fill = True).add_to(marker_cluster)
 
     m.save("map.html")
 
